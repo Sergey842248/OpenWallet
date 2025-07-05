@@ -18,17 +18,17 @@ class UpdateScheduler @Inject constructor(
     private val settingsStore: SettingsStore,
     private val workManager: WorkManager
 ) {
-    fun disableSync() {
+    suspend fun disableSync() {
         val updatablePasses = passRepository.updatable()
         updatablePasses.forEach { cancelUpdate(it) }
     }
 
-    fun enableSync() {
+    suspend fun enableSync() {
         val updatablePasses = passRepository.updatable()
         updatablePasses.forEach { scheduleUpdate(it) }
     }
 
-    fun updateSyncInterval() {
+    suspend fun updateSyncInterval() {
         val updatablePasses = passRepository.updatable()
         updatablePasses.forEach { cancelUpdate(it) }
         updatablePasses.forEach { scheduleUpdate(it) }

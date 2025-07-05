@@ -7,6 +7,8 @@ import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wallet
@@ -26,9 +28,12 @@ import nz.eloque.foss_wallet.R
 import nz.eloque.foss_wallet.shortcut.Shortcut
 import nz.eloque.foss_wallet.ui.screens.AboutScreen
 import nz.eloque.foss_wallet.ui.screens.PassScreen
+import nz.eloque.foss_wallet.ui.screens.AddMembershipCardScreen
+import nz.eloque.foss_wallet.ui.screens.EditMembershipCardScreen
 import nz.eloque.foss_wallet.ui.screens.SettingsScreen
 import nz.eloque.foss_wallet.ui.screens.UpdateFailureScreen
 import nz.eloque.foss_wallet.ui.screens.WalletScreen
+import nz.eloque.foss_wallet.ui.screens.EditMembershipCardScreen
 import nz.eloque.foss_wallet.ui.view.settings.SettingsViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 
@@ -36,6 +41,8 @@ sealed class Screen(val route: String, val icon: ImageVector, @StringRes val res
     data object Wallet : Screen("wallet", Icons.Default.Wallet, R.string.wallet)
     data object About : Screen("about", Icons.Default.Info, R.string.about)
     data object Settings : Screen("settings", Icons.Default.Settings, R.string.settings)
+    data object AddMembershipCard : Screen("add_membership_card", Icons.Default.Add, R.string.add_membership_card)
+    data object EditMembershipCard : Screen("edit_membership_card", Icons.Default.Edit, R.string.edit)
 }
 
 @Composable
@@ -58,13 +65,23 @@ fun WalletApp(
             popExitTransition = { slideOutOfContainer(SlideDirection.End, tween()) }
         ) {
             composable(Screen.Wallet.route) {
-                WalletScreen(navController, passViewModel)
+                WalletScreen(navController, passViewModel, settingsViewModel)
             }
             composable(Screen.About.route) {
                 AboutScreen(navController)
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(navController, settingsViewModel)
+            }
+            composable(Screen.AddMembershipCard.route) {
+                AddMembershipCardScreen(navController)
+            }
+            composable(
+                route = Screen.EditMembershipCard.route + "/{passId}",
+                arguments = listOf(navArgument("passId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val passId = backStackEntry.arguments?.getString("passId")!!
+                EditMembershipCardScreen(passId, navController)
             }
             composable(
                 route = "pass/{passId}",

@@ -31,10 +31,13 @@ interface PassDao {
     fun dessociate(passId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(pass: Pass)
+    suspend fun insert(pass: Pass)
+
+    @androidx.room.Update
+    suspend fun update(pass: Pass)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(group: PassGroup): Long
+    suspend fun insert(group: PassGroup): Long
 
     @Delete
     fun delete(pass: Pass)

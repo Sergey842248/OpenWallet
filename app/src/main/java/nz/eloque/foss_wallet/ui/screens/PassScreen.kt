@@ -35,14 +35,20 @@ import nz.eloque.foss_wallet.api.FailureReason
 import nz.eloque.foss_wallet.api.UpdateContent
 import nz.eloque.foss_wallet.api.UpdateResult
 import nz.eloque.foss_wallet.model.Pass
+import nz.eloque.foss_wallet.model.PassType
 import nz.eloque.foss_wallet.shortcut.Shortcut
 import nz.eloque.foss_wallet.ui.AllowOnLockscreen
+import nz.eloque.foss_wallet.ui.Screen
 import nz.eloque.foss_wallet.ui.WalletScaffold
+import androidx.compose.foundation.layout.Column
 import nz.eloque.foss_wallet.ui.view.pass.PassShareButton
 import nz.eloque.foss_wallet.ui.view.pass.PassView
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 import nz.eloque.foss_wallet.utils.asString
 import java.util.Locale
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +76,23 @@ fun PassScreen(
             toolWindow = true,
             actions = {
                 Row {
-                    if (pass.value.updatable()) {
+                    if (pass.value.type is PassType.MembershipCard) {
+                        IconButton(onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                passViewModel.delete(pass.value)
+                                withContext(Dispatchers.Main) {
+                                    navController.popBackStack()
+                                }
+                            }
+                        }) {
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+                        }
+                        IconButton(onClick = {
+                            navController.navigate(Screen.EditMembershipCard.route + "/${pass.value.id}")
+                        }) {
+                            Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
+                        }
+                    } else if (pass.value.updatable()) {
                         val uriHandler = LocalUriHandler.current
                         UpdateButton(isLoading = isLoading.value) {
                             coroutineScope.launch(Dispatchers.IO) {
@@ -119,7 +141,9 @@ fun PassScreen(
                 }
             },
         ) { scrollBehavior ->
-            PassView(pass.value, passViewModel.barcodePosition(), scrollBehavior = scrollBehavior)
+            Column {
+                PassView(pass.value, passViewModel.barcodePosition(), scrollBehavior = scrollBehavior)
+            }
         }
     }
 }

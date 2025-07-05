@@ -18,7 +18,7 @@ class PassRepository @Inject constructor(
 
     fun all(): Flow<List<PassWithLocalization>> = passDao.all()
 
-    fun updatable(): List<Pass> = passDao.updatable()
+    suspend fun updatable(): List<Pass> = passDao.updatable()
 
     fun filtered(query: String): Flow<List<PassWithLocalization>> {
         return if (query.isEmpty()) {
@@ -28,23 +28,27 @@ class PassRepository @Inject constructor(
             result.map { it.filter { it.pass.contains(query) } } }
     }
 
-    fun byId(id: String): PassWithLocalization = passDao.byId(id)
+    suspend fun byId(id: String): PassWithLocalization = passDao.byId(id)
 
-    fun associate(pass: Pass, group: PassGroup) = passDao.associate(pass.id, group.id)
+    suspend fun associate(pass: Pass, group: PassGroup) = passDao.associate(pass.id, group.id)
 
-    fun insert(pass: Pass, bitmaps: PassBitmaps, originalPass: OriginalPass) {
+    suspend fun insert(pass: Pass, bitmaps: PassBitmaps, originalPass: OriginalPass) {
         val id = pass.id
         passDao.insert(pass)
         bitmaps.saveToDisk(context, id)
         originalPass.saveToDisk(context, id)
     }
 
-    fun insert(group: PassGroup): PassGroup {
+    suspend fun update(pass: Pass) {
+        passDao.update(pass)
+    }
+
+    suspend fun insert(group: PassGroup): PassGroup {
         val id = passDao.insert(group)
         return group.copy(id)
     }
 
-    fun delete(pass: Pass) {
+    suspend fun delete(pass: Pass) {
         pass.deleteFiles(context)
         passDao.delete(pass)
     }

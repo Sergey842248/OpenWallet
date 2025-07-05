@@ -9,6 +9,8 @@ import nz.eloque.foss_wallet.api.UpdateResult
 import nz.eloque.foss_wallet.api.UpdateScheduler
 import nz.eloque.foss_wallet.model.Pass
 import nz.eloque.foss_wallet.model.PassGroup
+import nz.eloque.foss_wallet.model.PassLocalization
+import nz.eloque.foss_wallet.model.PassWithLocalization
 import nz.eloque.foss_wallet.notifications.NotificationService
 import nz.eloque.foss_wallet.parsing.PassParser
 import nz.eloque.foss_wallet.persistence.localization.PassLocalizationRepository
@@ -27,11 +29,11 @@ class PassStore @Inject constructor(
 
     fun allPasses() = passRepository.all()
 
-    fun passById(id: String) = passRepository.byId(id)
+    suspend fun passById(id: String) = passRepository.byId(id)
 
     fun filtered(query: String) = passRepository.filtered(query)
 
-    fun add(loadResult: PassLoadResult) {
+    suspend fun add(loadResult: PassLoadResult) {
         insert(loadResult)
         if (loadResult.pass.pass.updatable()) {
             updateScheduler.scheduleUpdate(loadResult.pass.pass)
@@ -39,6 +41,14 @@ class PassStore @Inject constructor(
     }
 
     suspend fun update(pass: Pass): UpdateResult {
+        if (!pass.updatable()) {
+            // For passes that are not updatable via web service (e.g., MembershipCard),
+            // just update the local data and return success.
+            passRepository.update(pass)
+            val localizedPass = PassWithLocalization(pass, emptyList<PassLocalization>()).applyLocalization(Locale.getDefault().language)
+            return UpdateResult.Success(UpdateContent.Pass(localizedPass))
+        }
+
         val updated = PassbookApi.getUpdated(pass)
         return if (updated is UpdateResult.Success && updated.content is UpdateContent.LoadResult) {
             insert(updated.content.result)
@@ -51,24 +61,24 @@ class PassStore @Inject constructor(
         }
     }
 
-    fun group(passes: Set<Pass>): PassGroup {
+    suspend fun group(passes: Set<Pass>): PassGroup {
         val group = passRepository.insert(PassGroup())
         passes.forEach { passRepository.associate(it, group) }
         return group
     }
 
-    fun delete(pass: Pass) {
+    suspend fun delete(pass: Pass) {
         passRepository.delete(pass)
         updateScheduler.cancelUpdate(pass)
         Shortcut.remove(context, pass)
     }
 
-    fun load(context: Context, inputStream: InputStream) {
+    suspend fun load(context: Context, inputStream: InputStream) {
         val loaded = PassLoader(PassParser(context)).load(inputStream)
         add(loaded)
     }
 
-    private fun insert(loadResult: PassLoadResult) {
+    private suspend fun insert(loadResult: PassLoadResult) {
         val passWithLocalization = loadResult.pass
         passRepository.insert(passWithLocalization.pass, loadResult.bitmaps, loadResult.originalPass)
         passWithLocalization.localizations.map { it.copy(passId = passWithLocalization.pass.id) }.forEach { localizationRepository.insert(it) }

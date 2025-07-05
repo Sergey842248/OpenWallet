@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.eloque.foss_wallet.R
 import nz.eloque.foss_wallet.model.Pass
+import nz.eloque.foss_wallet.persistence.MembershipCardImageDisplay
 import nz.eloque.foss_wallet.ui.card.ShortPassCard
 import nz.eloque.foss_wallet.ui.components.FilterBar
 import nz.eloque.foss_wallet.ui.components.GroupCard
@@ -48,6 +49,7 @@ fun WalletView(
     listState: LazyListState = rememberLazyListState(),
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
     selectedPasses: SnapshotStateSet<Pass>,
+    membershipCardImageDisplay: MembershipCardImageDisplay,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val list = passViewModel.uiState.collectAsState()
@@ -98,7 +100,8 @@ fun WalletView(
                     navController.navigate("pass/${it.id}")
                 },
                 passViewModel = passViewModel,
-                selectedPasses = selectedPasses
+                selectedPasses = selectedPasses,
+                membershipCardImageDisplay = membershipCardImageDisplay
             )
         }
         items(ungrouped) { pass ->
@@ -113,7 +116,8 @@ fun WalletView(
                     onClick = {
                         navController.navigate("pass/${pass.id}")
                     },
-                    selected = selectedPasses.contains(pass)
+                    selected = selectedPasses.contains(pass),
+                    membershipCardImageDisplay = membershipCardImageDisplay
                 )
             }
         }

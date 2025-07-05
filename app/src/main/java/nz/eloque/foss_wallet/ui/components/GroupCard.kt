@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import nz.eloque.foss_wallet.R
 import nz.eloque.foss_wallet.model.Pass
+import nz.eloque.foss_wallet.persistence.MembershipCardImageDisplay
 import nz.eloque.foss_wallet.ui.card.ShortPassCard
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 import nz.eloque.foss_wallet.utils.darken
@@ -45,6 +46,7 @@ fun GroupCard(
     passViewModel: PassViewModel,
     modifier: Modifier = Modifier,
     onClick: ((Pass) -> Unit)? = null,
+    membershipCardImageDisplay: MembershipCardImageDisplay,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -69,6 +71,7 @@ fun GroupCard(
                         )
                     ),
                     onClick = { onClick?.invoke(item) },
+                    membershipCardImageDisplay = membershipCardImageDisplay
                 )
             }
             Box(

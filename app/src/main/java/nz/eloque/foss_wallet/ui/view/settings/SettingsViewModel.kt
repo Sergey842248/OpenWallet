@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import nz.eloque.foss_wallet.api.UpdateScheduler
 import nz.eloque.foss_wallet.persistence.BarcodePosition
+import nz.eloque.foss_wallet.persistence.MembershipCardImageDisplay
 import nz.eloque.foss_wallet.persistence.SettingsStore
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -20,6 +21,7 @@ data class SettingsUiState(
     val enableSync: Boolean = false,
     val syncInterval: Duration = 1.toDuration(DurationUnit.HOURS),
     val barcodePosition: BarcodePosition = BarcodePosition.Center,
+    val membershipCardImageDisplay: MembershipCardImageDisplay = MembershipCardImageDisplay.SMALL,
 )
 
 @HiltViewModel
@@ -40,28 +42,38 @@ class SettingsViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 enableSync = settingsStore.isSyncEnabled(),
                 syncInterval = settingsStore.syncInterval(),
-                barcodePosition = settingsStore.barcodePosition()
+                barcodePosition = settingsStore.barcodePosition(),
+                membershipCardImageDisplay = settingsStore.membershipCardImageDisplay()
             )
         }
     }
 
     fun enableSync(enabled: Boolean) {
         settingsStore.enableSync(enabled)
-        if (enabled) {
-            updateScheduler.enableSync()
-        } else {
-            updateScheduler.disableSync()
+        viewModelScope.launch {
+            if (enabled) {
+                updateScheduler.enableSync()
+            } else {
+                updateScheduler.disableSync()
+            }
+            update()
         }
-        update()
     }
     fun setSyncInterval(duration: Duration) {
         settingsStore.setSyncInterval(duration)
-        updateScheduler.updateSyncInterval()
-        update()
+        viewModelScope.launch {
+            updateScheduler.updateSyncInterval()
+            update()
+        }
     }
 
     fun setBarcodePosition(center: Boolean) {
         settingsStore.setBarcodePosition(if (center) BarcodePosition.Center else BarcodePosition.Top)
+        update()
+    }
+
+    fun setMembershipCardImageDisplay(display: MembershipCardImageDisplay) {
+        settingsStore.setMembershipCardImageDisplay(display)
         update()
     }
 }

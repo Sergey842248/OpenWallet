@@ -1,10 +1,17 @@
 package nz.eloque.foss_wallet.persistence
 
 import android.location.Location
+import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import nz.eloque.foss_wallet.model.BarCode
+import nz.eloque.foss_wallet.model.MembershipCard
 import nz.eloque.foss_wallet.model.PassColors
 import nz.eloque.foss_wallet.model.PassType
 import nz.eloque.foss_wallet.model.TransitType
@@ -16,6 +23,18 @@ import java.time.Instant
 import java.util.UUID
 
 class TypeConverters {
+
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(Uri::class.java, object : TypeAdapter<Uri>() {
+            override fun write(out: JsonWriter, value: Uri?) {
+                out.value(value?.toString())
+            }
+
+            override fun read(input: JsonReader): Uri? {
+                return input.nextString()?.let { Uri.parse(it) }
+            }
+        })
+        .create()
 
     @TypeConverter
     fun fromInstant(instant: Instant): Long {
@@ -52,6 +71,7 @@ class TypeConverters {
             is PassType.Event -> passType.jsonKey
             is PassType.Generic -> passType.jsonKey
             is PassType.StoreCard -> passType.jsonKey
+            is PassType.MembershipCard -> passType.jsonKey
         }
     }
 
@@ -65,6 +85,7 @@ class TypeConverters {
                 PassType.EVENT -> PassType.Event()
                 PassType.COUPON -> PassType.Coupon()
                 PassType.STORE_CARD -> PassType.StoreCard()
+                PassType.MEMBERSHIP_CARD -> PassType.MembershipCard()
                 else -> PassType.Generic()
             }
         }
@@ -114,5 +135,25 @@ class TypeConverters {
     @TypeConverter
     fun toFields(str: String): List<PassField> {
         return JSONArray(str).map { PassField.fromJson(it) }
+    }
+
+    @TypeConverter
+    fun fromMembershipCard(value: MembershipCard?): String? {
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun toMembershipCard(value: String?): MembershipCard? {
+        return gson.fromJson(value, MembershipCard::class.java)
+    }
+
+    @TypeConverter
+    fun fromUri(uri: Uri?): String? {
+        return uri?.toString()
+    }
+
+    @TypeConverter
+    fun toUri(uriString: String?): Uri? {
+        return uriString?.let { Uri.parse(it) }
     }
 }

@@ -60,6 +60,7 @@ data class Pass(
     val secondaryFields: List<PassField> = LinkedList(),
     val auxiliaryFields: List<PassField> = LinkedList(),
     val backFields: List<PassField> = LinkedList(),
+    val membershipCard: MembershipCard? = null,
 ) {
     fun iconFile(context: Context): File = coilImageModel(context, "icon", true)!!
     fun logoFile(context: Context): File? = coilImageModel(context, "logo", hasLogo)

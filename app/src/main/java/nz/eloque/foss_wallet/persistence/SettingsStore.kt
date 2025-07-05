@@ -11,6 +11,7 @@ import kotlin.time.toDuration
 private const val SYNC_INTERVAL = "syncInterval"
 private const val SYNC_ENABLED = "syncEnabled"
 private const val BARCODE_POSITION = "barcodePosition"
+private const val MEMBERSHIP_CARD_IMAGE_DISPLAY = "membershipCardImageDisplay"
 
 sealed class BarcodePosition(val arrangement: Arrangement.Vertical, val key: String) {
     object Top : BarcodePosition(Arrangement.Top, "TOP")
@@ -46,4 +47,8 @@ class SettingsStore @Inject constructor(
     fun barcodePosition(): BarcodePosition = BarcodePosition.of(prefs.getString(BARCODE_POSITION, BarcodePosition.Center.key)!!)
 
     fun setBarcodePosition(barcodePosition: BarcodePosition) = prefs.edit { putString(BARCODE_POSITION, barcodePosition.key) }
+
+    fun membershipCardImageDisplay(): MembershipCardImageDisplay = MembershipCardImageDisplay.of(prefs.getString(MEMBERSHIP_CARD_IMAGE_DISPLAY, MembershipCardImageDisplay.SMALL.key)!!)
+
+    fun setMembershipCardImageDisplay(membershipCardImageDisplay: MembershipCardImageDisplay) = prefs.edit { putString(MEMBERSHIP_CARD_IMAGE_DISPLAY, membershipCardImageDisplay.key) }
 }

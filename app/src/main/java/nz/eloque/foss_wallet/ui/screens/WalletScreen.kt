@@ -18,9 +18,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,6 +38,7 @@ import nz.eloque.foss_wallet.model.Pass
 import nz.eloque.foss_wallet.persistence.InvalidPassException
 import nz.eloque.foss_wallet.ui.Screen
 import nz.eloque.foss_wallet.ui.WalletScaffold
+import nz.eloque.foss_wallet.ui.view.settings.SettingsViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.WalletView
 import nz.eloque.foss_wallet.utils.isScrollingUp
@@ -43,6 +48,7 @@ import nz.eloque.foss_wallet.utils.isScrollingUp
 fun WalletScreen(
     navController: NavHostController,
     passViewModel: PassViewModel,
+    settingsViewModel: SettingsViewModel,
 ) {
     val context = LocalContext.current
     val contentResolver = context.contentResolver
@@ -67,6 +73,22 @@ fun WalletScreen(
         }
     }
     val selectedPasses = remember { mutableStateSetOf<Pass>() }
+    var showAddPassDialog by remember { mutableStateOf(false) }
+    val settings = settingsViewModel.uiState.collectAsState()
+
+    if (showAddPassDialog) {
+        AddPassDialog(
+            onDismissRequest = { showAddPassDialog = false },
+            onFlightPassClick = {
+                showAddPassDialog = false
+                launcher.launch(arrayOf("*/*"))
+            },
+            onMembershipCardClick = {
+                showAddPassDialog = false
+                navController.navigate(Screen.AddMembershipCard.route)
+            }
+        )
+    }
 
     WalletScaffold(
         navController = navController,
@@ -115,11 +137,18 @@ fun WalletScreen(
                     text = { Text(stringResource(R.string.add_pass)) },
                     icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_pass)) },
                     expanded = listState.isScrollingUp(),
-                    onClick = { launcher.launch(arrayOf("*/*")) }
+                    onClick = { showAddPassDialog = true }
                 )
             }
         },
     ) { scrollBehavior ->
-        WalletView(navController, passViewModel, listState = listState, scrollBehavior = scrollBehavior, selectedPasses = selectedPasses)
+        WalletView(
+            navController,
+            passViewModel,
+            listState = listState,
+            scrollBehavior = scrollBehavior,
+            selectedPasses = selectedPasses,
+            membershipCardImageDisplay = settings.value.membershipCardImageDisplay
+        )
     }
 }

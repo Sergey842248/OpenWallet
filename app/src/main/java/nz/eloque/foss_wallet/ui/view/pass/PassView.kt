@@ -3,18 +3,24 @@ package nz.eloque.foss_wallet.ui.view.pass
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.Image
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import nz.eloque.foss_wallet.R
 import nz.eloque.foss_wallet.model.Pass
 import nz.eloque.foss_wallet.model.PassType
 import nz.eloque.foss_wallet.model.field.PassContent
@@ -22,6 +28,12 @@ import nz.eloque.foss_wallet.model.field.PassField
 import nz.eloque.foss_wallet.persistence.BarcodePosition
 import nz.eloque.foss_wallet.ui.card.PassCard
 import java.time.Instant
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import nz.eloque.foss_wallet.ui.view.image.ZoomableImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +56,41 @@ fun PassView(
             ) {
                 AsyncPassImage(model = pass.footerFile(context), modifier = Modifier.fillMaxWidth())
                 BarcodesView(pass.barCodes, barcodePosition)
+                if (pass.type is PassType.MembershipCard) {
+                    var showFrontImageDialog by remember { mutableStateOf(false) }
+                    var showBackImageDialog by remember { mutableStateOf(false) }
+
+                    pass.membershipCard?.frontImageUri?.let { uri ->
+                        Image(
+                            painter = rememberAsyncImagePainter(uri),
+                            contentDescription = stringResource(R.string.image),
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp) // Adjust height as needed
+                                .padding(8.dp)
+                                .clickable { showFrontImageDialog = true }
+                        )
+                        if (showFrontImageDialog) {
+                            ZoomableImage(imageUri = uri, onDismiss = { showFrontImageDialog = false })
+                        }
+                    }
+                    pass.membershipCard?.backImageUri?.let { uri ->
+                        Image(
+                            painter = rememberAsyncImagePainter(uri),
+                            contentDescription = stringResource(R.string.image),
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp) // Adjust height as needed
+                                .padding(8.dp)
+                                .clickable { showBackImageDialog = true }
+                        )
+                        if (showBackImageDialog) {
+                            ZoomableImage(imageUri = uri, onDismiss = { showBackImageDialog = false })
+                        }
+                    }
+                }
             }
         }
         Column(

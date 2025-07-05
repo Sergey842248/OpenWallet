@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import nz.eloque.foss_wallet.model.Pass
+import nz.eloque.foss_wallet.persistence.MembershipCardImageDisplay
 
 @Composable
 fun ShortPassCard(
@@ -19,6 +20,7 @@ fun ShortPassCard(
     onClick: (() -> Unit)? = null,
     selected: Boolean = false,
     colors: CardColors = CardDefaults.elevatedCardColors(),
+    membershipCardImageDisplay: MembershipCardImageDisplay,
 ) {
     val cardColors = pass.colors?.toCardColors() ?: colors
     val scale by animateFloatAsState(if (selected) 0.95f else 1f)
@@ -29,7 +31,7 @@ fun ShortPassCard(
                 .fillMaxWidth()
                 .scale(scale)
         ) {
-            ShortPassContent(pass, cardColors)
+            ShortPassContent(pass, cardColors, membershipCardImageDisplay = membershipCardImageDisplay)
         }
     } else {
         ElevatedCard(
@@ -39,7 +41,7 @@ fun ShortPassCard(
                 .fillMaxWidth()
                 .scale(scale)
         ) {
-            ShortPassContent(pass, cardColors)
+            ShortPassContent(pass, cardColors, membershipCardImageDisplay = membershipCardImageDisplay)
         }
     }
 }
