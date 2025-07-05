@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -63,8 +64,7 @@ fun WalletView(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                imageVector = Icons.Default.Wallet,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(R.string.wallet),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier.fillMaxWidth(0.5f),

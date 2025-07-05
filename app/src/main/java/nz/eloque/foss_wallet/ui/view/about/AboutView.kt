@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Construction
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Source
-import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -21,10 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -44,15 +43,14 @@ fun AboutView() {
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Image(
-                imageVector = Icons.Default.Wallet,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentDescription = stringResource(R.string.wallet),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier.fillMaxWidth(0.5f)
             )
             Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.displaySmall
             )
@@ -65,17 +63,17 @@ fun AboutView() {
         UriButton(
             icon = Icons.Default.Source,
             text = stringResource(R.string.source_code),
-            uri = "https://github.com/SeineEloquenz/fosswallet"
+            uri = "https://github.com/Sergey842248/OpenWallet"
         )
         UriButton(
             icon = Icons.Default.Balance,
             text = stringResource(R.string.license),
-            uri = "https://github.com/SeineEloquenz/fosswallet/blob/main/LICENSE"
+            uri = "https://github.com/Sergey842248/OpenWallet/blob/main/LICENSE"
         )
         UriButton(
             icon = Icons.Default.PrivacyTip,
             text = stringResource(R.string.privacy),
-            uri = "https://github.com/SeineEloquenz/fosswallet/blob/main/PRIVACY.md"
+            uri = "https://github.com/Sergey842248/OpenWallet/blob/main/PRIVACY.md"
         )
     }
     Box(
@@ -84,7 +82,7 @@ fun AboutView() {
     ) {
         Text(
             text = "v${BuildConfig.VERSION_NAME}-${BuildConfig.BUILD_TYPE}-${BuildConfig.VERSION_CODE}",
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall
         )
@@ -121,11 +119,11 @@ fun AboutContent(
         Icon(
             imageVector = icon,
             contentDescription = text,
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onSurface,
             style = textStyle,
             textAlign = TextAlign.Center
         )

@@ -7,6 +7,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import nz.eloque.foss_wallet.model.Pass
 import nz.eloque.foss_wallet.persistence.SettingsStore
 import nz.eloque.foss_wallet.persistence.pass.PassRepository
@@ -19,19 +21,25 @@ class UpdateScheduler @Inject constructor(
     private val workManager: WorkManager
 ) {
     suspend fun disableSync() {
-        val updatablePasses = passRepository.updatable()
-        updatablePasses.forEach { cancelUpdate(it) }
+        withContext(Dispatchers.IO) {
+            val updatablePasses = passRepository.updatable()
+            updatablePasses.forEach { cancelUpdate(it) }
+        }
     }
 
     suspend fun enableSync() {
-        val updatablePasses = passRepository.updatable()
-        updatablePasses.forEach { scheduleUpdate(it) }
+        withContext(Dispatchers.IO) {
+            val updatablePasses = passRepository.updatable()
+            updatablePasses.forEach { scheduleUpdate(it) }
+        }
     }
 
     suspend fun updateSyncInterval() {
-        val updatablePasses = passRepository.updatable()
-        updatablePasses.forEach { cancelUpdate(it) }
-        updatablePasses.forEach { scheduleUpdate(it) }
+        withContext(Dispatchers.IO) {
+            val updatablePasses = passRepository.updatable()
+            updatablePasses.forEach { cancelUpdate(it) }
+            updatablePasses.forEach { scheduleUpdate(it) }
+        }
     }
 
     fun scheduleUpdate(pass: Pass) {

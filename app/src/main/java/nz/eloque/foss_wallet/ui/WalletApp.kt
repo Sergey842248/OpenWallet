@@ -36,6 +36,14 @@ import nz.eloque.foss_wallet.ui.screens.WalletScreen
 import nz.eloque.foss_wallet.ui.screens.EditMembershipCardScreen
 import nz.eloque.foss_wallet.ui.view.settings.SettingsViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
+import nz.eloque.foss_wallet.persistence.ThemeMode
+import nz.eloque.foss_wallet.persistence.AccentColor
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.ui.graphics.Color
 
 sealed class Screen(val route: String, val icon: ImageVector, @StringRes val resourceId: Int) {
     data object Wallet : Screen("wallet", Icons.Default.Wallet, R.string.wallet)
@@ -52,57 +60,102 @@ fun WalletApp(
     passViewModel: PassViewModel = viewModel(),
     settingsViewModel: SettingsViewModel = viewModel(),
 ) {
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
+    val settings by settingsViewModel.uiState.collectAsState()
+
+    val lightColors = lightColorScheme(
+        primary = Color(settings.accentColor.colorInt),
+        secondary = Color(0xFF03DAC6),
+        background = Color.White,
+        surface = Color.White,
+        onPrimary = Color.White,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+    )
+
+    val darkColors = darkColorScheme(
+        primary = Color(settings.accentColor.colorInt),
+        secondary = Color(0xFF03DAC6),
+        background = Color(0xFF121212),
+        surface = Color(0xFF121212),
+        onPrimary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.White,
+        onSurface = Color.White,
+    )
+
+    val blackColors = darkColorScheme(
+        primary = Color(settings.accentColor.colorInt),
+        secondary = Color.Black,
+        background = Color.Black,
+        surface = Color.Black,
+        onPrimary = Color.White,
+        onSecondary = Color.White,
+        onBackground = Color.White,
+        onSurface = Color.White,
+    )
+
+    val colors = when (settings.themeMode) {
+        ThemeMode.LIGHT -> lightColors
+        ThemeMode.DARK -> darkColors
+        ThemeMode.BLACK -> blackColors
+    }
+
+    MaterialTheme(
+        colorScheme = colors
     ) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Wallet.route,
-            enterTransition = { slideIntoContainer(SlideDirection.Start, tween()) },
-            exitTransition = { slideOutOfContainer(SlideDirection.Start, tween()) },
-            popEnterTransition = { slideIntoContainer(SlideDirection.End, tween()) },
-            popExitTransition = { slideOutOfContainer(SlideDirection.End, tween()) }
+        Surface(
+            modifier = modifier
+                .fillMaxSize()
         ) {
-            composable(Screen.Wallet.route) {
-                WalletScreen(navController, passViewModel, settingsViewModel)
-            }
-            composable(Screen.About.route) {
-                AboutScreen(navController)
-            }
-            composable(Screen.Settings.route) {
-                SettingsScreen(navController, settingsViewModel)
-            }
-            composable(Screen.AddMembershipCard.route) {
-                AddMembershipCardScreen(navController)
-            }
-            composable(
-                route = Screen.EditMembershipCard.route + "/{passId}",
-                arguments = listOf(navArgument("passId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val passId = backStackEntry.arguments?.getString("passId")!!
-                EditMembershipCardScreen(passId, navController)
-            }
-            composable(
-                route = "pass/{passId}",
-                deepLinks = listOf(navDeepLink {
-                    uriPattern = "${Shortcut.BASE_URI}/{passId}"
-                }),
-                arguments = listOf(navArgument("passId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val passId = backStackEntry.arguments?.getString("passId")!!
-                PassScreen(passId, navController, passViewModel)
-            }
-            composable(
-                route = "updateFailure/{reason}/{rationale}",
-                arguments = listOf(
-                    navArgument("reason") { type = NavType.StringType },
-                    navArgument("rationale") { type = NavType.StringType }
-                )
-            ) { backStackEntry ->
-                val reason = backStackEntry.arguments?.getString("reason")!!
-                val rationale = backStackEntry.arguments?.getString("rationale")!!
-                UpdateFailureScreen(reason, rationale, navController)
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Wallet.route,
+                enterTransition = { slideIntoContainer(SlideDirection.Start, tween()) },
+                exitTransition = { slideOutOfContainer(SlideDirection.Start, tween()) },
+                popEnterTransition = { slideIntoContainer(SlideDirection.End, tween()) },
+                popExitTransition = { slideOutOfContainer(SlideDirection.End, tween()) }
+            ) {
+                composable(Screen.Wallet.route) {
+                    WalletScreen(navController, passViewModel, settingsViewModel)
+                }
+                composable(Screen.About.route) {
+                    AboutScreen(navController)
+                }
+                composable(Screen.Settings.route) {
+                    SettingsScreen(navController, settingsViewModel)
+                }
+                composable(Screen.AddMembershipCard.route) {
+                    AddMembershipCardScreen(navController)
+                }
+                composable(
+                    route = Screen.EditMembershipCard.route + "/{passId}",
+                    arguments = listOf(navArgument("passId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val passId = backStackEntry.arguments?.getString("passId")!!
+                    EditMembershipCardScreen(passId, navController)
+                }
+                composable(
+                    route = "pass/{passId}",
+                    deepLinks = listOf(navDeepLink {
+                        uriPattern = "${Shortcut.BASE_URI}/{passId}"
+                    }),
+                    arguments = listOf(navArgument("passId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val passId = backStackEntry.arguments?.getString("passId")!!
+                    PassScreen(passId, navController, passViewModel)
+                }
+                composable(
+                    route = "updateFailure/{reason}/{rationale}",
+                    arguments = listOf(
+                        navArgument("reason") { type = NavType.StringType },
+                        navArgument("rationale") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val reason = backStackEntry.arguments?.getString("reason")!!
+                    val rationale = backStackEntry.arguments?.getString("rationale")!!
+                    UpdateFailureScreen(reason, rationale, navController)
+                }
             }
         }
     }

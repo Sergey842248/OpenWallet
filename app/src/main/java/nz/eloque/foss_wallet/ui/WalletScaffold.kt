@@ -63,7 +63,6 @@ fun WalletScaffold(
     ) { innerPadding ->
         Box(modifier = modifier
             .padding(innerPadding)
-            .padding(horizontal = 10.dp)
         ) {
             content.invoke(scrollBehavior)
         }

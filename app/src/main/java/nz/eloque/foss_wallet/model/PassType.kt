@@ -16,6 +16,8 @@ sealed class PassType(val jsonKey: String) {
     class StoreCard : PassType(STORE_CARD)
     @Entity
     class MembershipCard : PassType(MEMBERSHIP_CARD)
+    @Entity
+    class FlightPass : PassType(FLIGHT_PASS)
 
     companion object {
 
@@ -25,5 +27,6 @@ sealed class PassType(val jsonKey: String) {
         const val BOARDING = "boardingPass"
         const val STORE_CARD = "storeCard"
         const val MEMBERSHIP_CARD = "membershipCard"
+        const val FLIGHT_PASS = "flightPass"
     }
 }

@@ -76,17 +76,17 @@ fun PassScreen(
             toolWindow = true,
             actions = {
                 Row {
-                    if (pass.value.type is PassType.MembershipCard) {
-                        IconButton(onClick = {
-                            coroutineScope.launch(Dispatchers.IO) {
-                                passViewModel.delete(pass.value)
-                                withContext(Dispatchers.Main) {
-                                    navController.popBackStack()
-                                }
+                    IconButton(onClick = {
+                        coroutineScope.launch(Dispatchers.IO) {
+                            passViewModel.delete(pass.value)
+                            withContext(Dispatchers.Main) {
+                                navController.popBackStack()
                             }
-                        }) {
-                            Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                         }
+                    }) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+                    }
+                    if (pass.value.type is PassType.MembershipCard) {
                         IconButton(onClick = {
                             navController.navigate(Screen.EditMembershipCard.route + "/${pass.value.id}")
                         }) {

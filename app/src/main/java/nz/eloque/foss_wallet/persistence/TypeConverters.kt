@@ -72,6 +72,7 @@ class TypeConverters {
             is PassType.Generic -> passType.jsonKey
             is PassType.StoreCard -> passType.jsonKey
             is PassType.MembershipCard -> passType.jsonKey
+            is PassType.FlightPass -> passType.jsonKey
         }
     }
 
@@ -86,6 +87,7 @@ class TypeConverters {
                 PassType.COUPON -> PassType.Coupon()
                 PassType.STORE_CARD -> PassType.StoreCard()
                 PassType.MEMBERSHIP_CARD -> PassType.MembershipCard()
+                PassType.FLIGHT_PASS -> PassType.FlightPass()
                 else -> PassType.Generic()
             }
         }
