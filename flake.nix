@@ -1,5 +1,5 @@
 {
-  description = "FossWallet";
+  description = "OpenWallet";
 
   outputs = { self, nixpkgs }:
   let

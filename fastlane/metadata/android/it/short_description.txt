@@ -1,1 +1,1 @@
-FossWallet è un portabigietti per file Apple Passbook (.pkpass)
+OpenWallet è un portabigietti per file Apple Passbook (.pkpass)

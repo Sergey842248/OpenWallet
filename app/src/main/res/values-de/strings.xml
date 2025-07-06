@@ -3,7 +3,7 @@
     <string name="settings">Einstellungen</string>
     <string name="update">Aktualisieren</string>
     <string name="back">Zurück</string>
-    <string name="permission_rationale">Ohne die Berechtigung(en) funktioniert Wallet nicht korrekt</string>
+    <string name="permission_rationale">Ohne die Berechtigung(en) funktioniert OpenWallet nicht korrekt</string>
     <string name="request_permissions">Berechtigung anfordern</string>
     <string name="image">Bild</string>
     <string name="pass">Pass</string>

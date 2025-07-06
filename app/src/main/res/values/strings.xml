@@ -5,7 +5,7 @@
     <string name="settings">Settings</string>
     <string name="update">Update</string>
     <string name="back">Back</string>
-    <string name="permission_rationale">Without the permission(s), Wallet does not work correctly</string>
+    <string name="permission_rationale">Without the permission(s), OpenWallet does not work correctly</string>
     <string name="request_permissions">Request Permission</string>
     <string name="wallet" translatable="false">Wallet</string>
     <string name="image">Image</string>
