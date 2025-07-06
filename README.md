@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/Sergey842248/OpenWallet/">
-    <img src="app\src\main\ic_launcher-playstore.png" height="256" style="border-radius: 20%;">
+    <img src="app\src\main\ic_launcher_rounded-playstore.png" height="256">
     <h1 align="center">OpenWallet</h1>
   </a>
 </p>
