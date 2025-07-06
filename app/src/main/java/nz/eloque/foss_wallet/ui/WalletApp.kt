@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,8 +63,20 @@ fun WalletApp(
 ) {
     val settings by settingsViewModel.uiState.collectAsState()
 
+    val accentColor = remember(settings.accentColor, settings.customAccentColor) {
+        if (settings.accentColor == AccentColor.CUSTOM && settings.customAccentColor != null) {
+            try {
+                Color(android.graphics.Color.parseColor(settings.customAccentColor))
+            } catch (e: IllegalArgumentException) {
+                Color(0xFF6200EE) // Default to purple if custom hex is invalid
+            }
+        } else {
+            settings.accentColor.colorInt?.let { Color(it) } ?: Color(0xFF6200EE) // Default to purple
+        }
+    }
+
     val lightColors = lightColorScheme(
-        primary = Color(settings.accentColor.colorInt),
+        primary = accentColor,
         secondary = Color(0xFF03DAC6),
         background = Color.White,
         surface = Color.White,
@@ -74,7 +87,7 @@ fun WalletApp(
     )
 
     val darkColors = darkColorScheme(
-        primary = Color(settings.accentColor.colorInt),
+        primary = accentColor,
         secondary = Color(0xFF03DAC6),
         background = Color(0xFF121212),
         surface = Color(0xFF121212),
@@ -85,7 +98,7 @@ fun WalletApp(
     )
 
     val blackColors = darkColorScheme(
-        primary = Color(settings.accentColor.colorInt),
+        primary = accentColor,
         secondary = Color.Black,
         background = Color.Black,
         surface = Color.Black,

@@ -30,6 +30,7 @@ data class SettingsUiState(
     val membershipCardImageDisplay: MembershipCardImageDisplay = MembershipCardImageDisplay.SMALL,
     val themeMode: ThemeMode = ThemeMode.LIGHT,
     val accentColor: AccentColor = AccentColor.PURPLE,
+    val customAccentColor: String? = null,
     val flightPasses: List<Pass> = emptyList()
 )
 
@@ -63,7 +64,8 @@ class SettingsViewModel @Inject constructor(
                 barcodePosition = settingsStore.barcodePosition(),
                 membershipCardImageDisplay = settingsStore.membershipCardImageDisplay(),
                 themeMode = settingsStore.themeMode(),
-                accentColor = settingsStore.accentColor()
+                accentColor = settingsStore.accentColor(),
+                customAccentColor = settingsStore.customAccentColor()
             )
         }
     }
@@ -104,6 +106,11 @@ class SettingsViewModel @Inject constructor(
 
     fun setAccentColor(accentColor: AccentColor) {
         settingsStore.setAccentColor(accentColor)
+        update()
+    }
+
+    fun setCustomAccentColor(hexColor: String?) {
+        settingsStore.setCustomAccentColor(hexColor)
         update()
     }
 

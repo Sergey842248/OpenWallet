@@ -13,6 +13,11 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -41,6 +46,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import nz.eloque.foss_wallet.model.Pass // Import Pass
 import nz.eloque.foss_wallet.model.PassType // Import PassType
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.toArgb
+import android.graphics.Color as AndroidColor // Alias to avoid conflict with Compose Color
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Slider
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color as ComposeColor // Alias to avoid conflict with Android Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,54 +133,180 @@ fun SettingsView(
                 text = stringResource(R.string.accent_color),
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            var expandedAccent by remember { mutableStateOf(false) }
-            val selectedAccentOption = settings.value.accentColor
 
-            ExposedDropdownMenuBox(
-                expanded = expandedAccent,
-                onExpandedChange = { expandedAccent = !expandedAccent },
-                modifier = Modifier.fillMaxWidth()
+            val currentAccentColor = settings.value.accentColor
+            val currentCustomHex = settings.value.customAccentColor
+
+            var showColorPickerDialog by remember { mutableStateOf(false) }
+            var hexInput by remember(currentCustomHex) { mutableStateOf(currentCustomHex ?: "") }
+
+            val selectedColor = remember(currentAccentColor, currentCustomHex) {
+                if (currentAccentColor == AccentColor.CUSTOM && currentCustomHex != null) {
+                    try {
+                        Color(AndroidColor.parseColor(currentCustomHex))
+                    } catch (e: IllegalArgumentException) {
+                        Color.Unspecified // Fallback for invalid hex
+                    }
+                } else {
+                    currentAccentColor.colorInt?.let { Color(it) } ?: Color.Unspecified
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextField(
-                    value = when (selectedAccentOption) {
-                        AccentColor.PURPLE -> stringResource(R.string.accent_color_purple)
-                        AccentColor.BLUE -> stringResource(R.string.accent_color_blue)
-                        AccentColor.GREEN -> stringResource(R.string.accent_color_green)
-                        AccentColor.ORANGE -> stringResource(R.string.accent_color_orange)
-                        AccentColor.RED -> stringResource(R.string.accent_color_red)
-                    },
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedAccent) },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(selectedColor, CircleShape)
+                        .clickable { showColorPickerDialog = true }
                 )
+                Spacer(modifier = Modifier.width(16.dp))
+                OutlinedTextField(
+                    value = hexInput,
+                    onValueChange = { newValue ->
+                        hexInput = newValue
+                        if (newValue.matches(Regex("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$"))) {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                settingsViewModel.setCustomAccentColor(newValue)
+                            }
+                        }
+                    },
+                    label = { Text("Hex Code") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-                ExposedDropdownMenu(
-                    expanded = expandedAccent,
-                    onDismissRequest = { expandedAccent = false }
-                ) {
-                    AccentColor.entries.forEach { accentOption ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    when (accentOption) {
-                                        AccentColor.PURPLE -> stringResource(R.string.accent_color_purple)
-                                        AccentColor.BLUE -> stringResource(R.string.accent_color_blue)
-                                        AccentColor.GREEN -> stringResource(R.string.accent_color_green)
-                                        AccentColor.ORANGE -> stringResource(R.string.accent_color_orange)
-                                        AccentColor.RED -> stringResource(R.string.accent_color_red)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (showColorPickerDialog) {
+                AlertDialog(
+                    onDismissRequest = { showColorPickerDialog = false },
+                    title = { Text("Choose Accent Color") },
+                    text = {
+                        var red by remember { mutableStateOf(selectedColor.red) }
+                        var green by remember { mutableStateOf(selectedColor.green) }
+                        var blue by remember { mutableStateOf(selectedColor.blue) }
+
+                        Column {
+                            OutlinedTextField(
+                                value = hexInput,
+                                onValueChange = { newValue ->
+                                    hexInput = newValue
+                                    try {
+                                        val color = Color(AndroidColor.parseColor(newValue))
+                                        red = color.red
+                                        green = color.green
+                                        blue = color.blue
+                                    } catch (e: IllegalArgumentException) {
+                                        // Invalid hex, do nothing or show error
                                     }
-                                )
-                            },
+                                },
+                                label = { Text("Hex Code (e.g., #RRGGBB or #AARRGGBB)") },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("Red: ${(red * 255).toInt()}")
+                            Slider(
+                                value = red,
+                                onValueChange = {
+                                    red = it
+                                    hexInput = ComposeColor(red, green, blue).toArgb().toHexString()
+                                },
+                                valueRange = 0f..1f
+                            )
+                            Text("Green: ${(green * 255).toInt()}")
+                            Slider(
+                                value = green,
+                                onValueChange = {
+                                    green = it
+                                    hexInput = ComposeColor(red, green, blue).toArgb().toHexString()
+                                },
+                                valueRange = 0f..1f
+                            )
+                            Text("Blue: ${(blue * 255).toInt()}")
+                            Slider(
+                                value = blue,
+                                onValueChange = {
+                                    blue = it
+                                    hexInput = ComposeColor(red, green, blue).toArgb().toHexString()
+                                },
+                                valueRange = 0f..1f
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Preset Colors
+                            val presetColors = listOf(
+                                AccentColor.PURPLE,
+                                AccentColor.BLUE,
+                                AccentColor.GREEN,
+                                AccentColor.ORANGE,
+                                AccentColor.RED
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                presetColors.forEach { accentColor ->
+                                    accentColor.colorInt?.let { colorInt ->
+                                        val color = ComposeColor(colorInt)
+                                        Box(
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .background(color, CircleShape)
+                                                .clickable {
+                                                    coroutineScope.launch(Dispatchers.IO) {
+                                                        settingsViewModel.setAccentColor(accentColor)
+                                                    settingsViewModel.setCustomAccentColor(null) // Clear custom if a preset is chosen
+                                                }
+                                                hexInput = color.toArgb().toHexString()
+                                                red = color.red
+                                                green = color.green
+                                                blue = color.blue
+                                                showColorPickerDialog = false
+                                                }
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .background(ComposeColor(red, green, blue), CircleShape)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(
                             onClick = {
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    settingsViewModel.setAccentColor(accentOption)
+                                    settingsViewModel.setCustomAccentColor(hexInput)
+                                    settingsViewModel.setAccentColor(AccentColor.CUSTOM) // Set to custom when OK is pressed
                                 }
-                                expandedAccent = false
+                                showColorPickerDialog = false
                             }
-                        )
+                        ) {
+                            Text("OK")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showColorPickerDialog = false }) {
+                            Text("Cancel")
+                        }
                     }
-                }
+                )
             }
         }
 
@@ -285,4 +432,8 @@ private fun isNaturalNumber(value: String): Boolean {
     } catch (_: NumberFormatException) {
         false
     }
+}
+
+fun Int.toHexString(): String {
+    return String.format("#%08X", this)
 }

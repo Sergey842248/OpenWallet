@@ -87,95 +87,94 @@ fun WalletScreen(
     var showAddOptions by remember { mutableStateOf(false) }
     val settings = settingsViewModel.uiState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) { // New root Box to cover entire screen
-        WalletScaffold(
-            navController = navController,
-            title = stringResource(id = R.string.wallet),
-            actions = {
-                IconButton(onClick = {
-                    navController.navigate(Screen.Settings.route)
-                }) {
-                    Icon(
-                        imageVector = Screen.Settings.icon,
-                        contentDescription = stringResource(R.string.about)
+    WalletScaffold(
+        navController = navController,
+        title = stringResource(id = R.string.wallet),
+        actions = {
+            IconButton(onClick = {
+                navController.navigate(Screen.Settings.route)
+            }) {
+                Icon(
+                    imageVector = Screen.Settings.icon,
+                    contentDescription = stringResource(R.string.about)
+                )
+            }
+        },
+        floatingActionButton = {
+            if (selectedPasses.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    FloatingActionButton(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                selectedPasses.forEach { passViewModel.delete(it) }
+                                selectedPasses.clear()
+                            }
+                        },
+                    ) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+                    }
+                    ExtendedFloatingActionButton(
+                        text = { Text(stringResource(R.string.group)) },
+                        icon = { Icon(imageVector = Icons.Default.Folder, contentDescription = stringResource(R.string.group)) },
+                        expanded = listState.isScrollingUp(),
+                        onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                passViewModel.group(selectedPasses.toSet())
+                                selectedPasses.clear()
+                            }
+                        },
                     )
                 }
-            },
-            floatingActionButton = {
-                if (selectedPasses.isNotEmpty()) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.End
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    AnimatedVisibility(
+                        visible = showAddOptions,
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        FloatingActionButton(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            onClick = {
-                                coroutineScope.launch(Dispatchers.IO) {
-                                    selectedPasses.forEach { passViewModel.delete(it) }
-                                    selectedPasses.clear()
-                                }
-                            },
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalAlignment = Alignment.End
                         ) {
-                            Icon(imageVector = Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
+                            ExtendedFloatingActionButton(
+                                text = { Text(stringResource(R.string.add_flight_pass)) },
+                                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_flight_pass)) },
+                                onClick = {
+                                    showAddOptions = false
+                                    launcher.launch(arrayOf("*/*"))
+                                },
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            )
+                            ExtendedFloatingActionButton(
+                                text = { Text(stringResource(R.string.membership_card)) },
+                                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_membership_card)) },
+                                onClick = {
+                                    showAddOptions = false
+                                    navController.navigate(Screen.AddMembershipCard.route)
+                                },
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            )
                         }
-                        ExtendedFloatingActionButton(
-                            text = { Text(stringResource(R.string.group)) },
-                            icon = { Icon(imageVector = Icons.Default.Folder, contentDescription = stringResource(R.string.group)) },
-                            expanded = listState.isScrollingUp(),
-                            onClick = {
-                                coroutineScope.launch(Dispatchers.IO) {
-                                    passViewModel.group(selectedPasses.toSet())
-                                    selectedPasses.clear()
-                                }
-                            },
-                        )
                     }
-                } else {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        AnimatedVisibility(
-                            visible = showAddOptions,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                horizontalAlignment = Alignment.End
-                            ) {
-                                ExtendedFloatingActionButton(
-                                    text = { Text(stringResource(R.string.add_flight_pass)) },
-                                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_flight_pass)) },
-                                    onClick = {
-                                        showAddOptions = false
-                                        launcher.launch(arrayOf("*/*"))
-                                    },
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                                )
-                                ExtendedFloatingActionButton(
-                                    text = { Text(stringResource(R.string.membership_card)) },
-                                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_membership_card)) },
-                                    onClick = {
-                                        showAddOptions = false
-                                        navController.navigate(Screen.AddMembershipCard.route)
-                                    },
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                                )
-                            }
-                        }
-                        ExtendedFloatingActionButton(
-                            text = { Text(if (showAddOptions) stringResource(R.string.cancel) else stringResource(R.string.add)) },
-                            icon = { Icon(imageVector = if (showAddOptions) Icons.Default.Close else Icons.Default.Add, contentDescription = if (showAddOptions) stringResource(R.string.cancel) else stringResource(R.string.add_pass)) },
-                            expanded = listState.isScrollingUp(), // Revert to original expanded state
-                            onClick = { showAddOptions = !showAddOptions },
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    ExtendedFloatingActionButton(
+                        text = { Text(if (showAddOptions) stringResource(R.string.cancel) else stringResource(R.string.add)) },
+                        icon = { Icon(imageVector = if (showAddOptions) Icons.Default.Close else Icons.Default.Add, contentDescription = if (showAddOptions) stringResource(R.string.cancel) else stringResource(R.string.add_pass)) },
+                        expanded = listState.isScrollingUp(), // Revert to original expanded state
+                        onClick = { showAddOptions = !showAddOptions },
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 }
-            },
-        ) { scrollBehavior ->
-            // WalletView is now directly the content of Scaffold, no extra Box
+            }
+        },
+    ) { scrollBehavior ->
+        Box(modifier = Modifier.fillMaxSize()) {
             WalletView(
                 navController,
                 passViewModel,
@@ -184,23 +183,22 @@ fun WalletScreen(
                 selectedPasses = selectedPasses,
                 membershipCardImageDisplay = settings.value.membershipCardImageDisplay
             )
-        }
 
-        // Dimming Box moved outside WalletScaffold content to cover entire screen
-        AnimatedVisibility(
-            visible = showAddOptions,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) { showAddOptions = false }
-            )
+            AnimatedVisibility(
+                visible = showAddOptions,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ) { showAddOptions = false }
+                )
+            }
         }
     }
 }
