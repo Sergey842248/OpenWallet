@@ -20,7 +20,7 @@
     <string name="add_pass">Ajouter une carte</string>
     <string name="about">À propos</string>
     <string name="source_code">Code source</string>
-    <string name="made_with_love">Fabriqué avec ❤ en Allemagne</string>
+    <string name="made_with_love">Fabriqué avec ❤</string>
     <string name="to">à</string>
     <string name="license">Licence</string>
     <string name="update_successful">Carte mise à jour avec succès</string>
@@ -30,4 +30,5 @@
     <string name="copy">Copier</string>
     <string name="status_code">Le serveur a répondu avec le statut %1$s</string>
     <string name="barcode_top_center">Haut / Centrer</string>
+    <string name="open_wallet">Ouvre OpenWallet</string>
 </resources>

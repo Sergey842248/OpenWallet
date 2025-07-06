@@ -22,7 +22,7 @@
     <string name="enable">Võta kasutusele</string>
     <string name="permission_rationale">Ilma vajalike õigusteta FossWallet ei toimi korralikult</string>
     <string name="no_barcode_format_given">Triipkoodi vorming on määratlemata! Kasutan vaikimisi QR-koodi vormingut. See aga ei pruugi olla korrektselt skaneeritav</string>
-    <string name="made_with_love">Tehtud Saksamaal suure ❤-ga</string>
+    <string name="made_with_love">Tehtud Saksamaal suure ❤</string>
     <string name="pass">Dokument</string>
     <string name="invalid_pass_toast">Dokumendi laadimine ei õnnestunud. Kas oled kindel, et see on korrektne .pkpass-vormingus fail?</string>
     <string name="to">-</string>
@@ -45,7 +45,7 @@
     <string name="details">Üksikasjad</string>
     <string name="status_forbidden">Server ei lubanud sellel dokumendil andmeid uuendada. Võib-olla on dokument juba aegunud?</string>
     <string name="status_not_updated">See dokument sisaldab uuendatud andmeid</string>
-    <string name="open_wallet">Ava FossWallet</string>
+    <string name="open_wallet">Ava OpenWallet</string>
     <string name="barcode_position">Triipkoodi asukoht ekraanil</string>
     <string name="barcode_top_center">Ülal / keskel</string>
 </resources>

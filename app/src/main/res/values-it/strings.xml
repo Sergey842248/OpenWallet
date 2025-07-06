@@ -36,7 +36,7 @@
     <string name="search">Cerca</string>
     <string name="add_shortcut">Aggiungi scorciatoia</string>
     <string name="shortcut_exists">Già esiste la scorciatoia!</string>
-    <string name="made_with_love">Fatto con ❤ in Germania</string>
+    <string name="made_with_love">Fatto con ❤</string>
     <string name="privacy">Privacy</string>
     <string name="details">Dettagli</string>
     <string name="copy">Copia</string>
@@ -47,5 +47,5 @@
     <string name="status_not_updated">Il tuo biglietto è già aggiornato</string>
     <string name="barcode_position">Posizione del codice a schermo intero</string>
     <string name="barcode_top_center">Alto/centro</string>
-    <string name="open_wallet">Apri FossWallet</string>
+    <string name="open_wallet">Apri OpenWallet</string>
 </resources>
