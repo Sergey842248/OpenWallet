@@ -52,6 +52,8 @@
     <string name="open_wallet">Open OpenWallet</string>
     <string name="barcode_position">Barcode Position in Fullscreen</string>
     <string name="barcode_top_center">Top / Center</string>
+    <string name="confirm_delete_dialog">Confirm Delete Dialog</string>
+    <string name="confirm_delete_dialog_message">Are you sure you want to delete this item?</string>
     <string name="add_pass_title">Add a new pass</string>
     <string name="flight_pass">Flight Pass</string>
     <string name="membership_card">Membership Card</string>

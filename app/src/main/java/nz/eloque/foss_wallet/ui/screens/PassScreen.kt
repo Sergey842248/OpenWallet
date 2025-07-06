@@ -49,6 +49,11 @@ import java.util.Locale
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import kotlinx.coroutines.withContext
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.setValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +65,9 @@ fun PassScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val pass = remember { mutableStateOf(Pass.placeholder())}
+    val settings by passViewModel.settingsUiState.collectAsState()
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(coroutineScope) {
         coroutineScope.launch(Dispatchers.IO) {
             pass.value = passViewModel.passById(passId).applyLocalization(Locale.getDefault().language)
@@ -77,10 +85,14 @@ fun PassScreen(
             actions = {
                 Row {
                     IconButton(onClick = {
-                        coroutineScope.launch(Dispatchers.IO) {
-                            passViewModel.delete(pass.value)
-                            withContext(Dispatchers.Main) {
-                                navController.popBackStack()
+                        if (settings.confirmDeleteDialog) {
+                            showDeleteConfirmationDialog = true
+                        } else {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                passViewModel.delete(pass.value)
+                                withContext(Dispatchers.Main) {
+                                    navController.popBackStack()
+                                }
                             }
                         }
                     }) {
@@ -144,6 +156,34 @@ fun PassScreen(
             Column {
                 PassView(pass.value, passViewModel.barcodePosition(), scrollBehavior = scrollBehavior)
             }
+        }
+
+        if (showDeleteConfirmationDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmationDialog = false },
+                title = { Text(stringResource(R.string.delete)) },
+                text = { Text(stringResource(R.string.confirm_delete_dialog_message)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                passViewModel.delete(pass.value)
+                                withContext(Dispatchers.Main) {
+                                    navController.popBackStack()
+                                }
+                            }
+                            showDeleteConfirmationDialog = false
+                        }
+                    ) {
+                        Text(stringResource(R.string.delete))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteConfirmationDialog = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
         }
     }
 }

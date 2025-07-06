@@ -323,6 +323,12 @@ fun SettingsView(
                 onCheckedChange = { coroutineScope.launch(Dispatchers.IO) { settingsViewModel.setBarcodePosition(it) } }
             )
             HorizontalDivider()
+            SettingsSwitch(
+                name = R.string.confirm_delete_dialog,
+                switchState = settings.value.confirmDeleteDialog,
+                onCheckedChange = { coroutineScope.launch(Dispatchers.IO) { settingsViewModel.setConfirmDeleteDialog(it) } }
+            )
+            HorizontalDivider()
             Text(
                 text = stringResource(R.string.membership_card_image_display_setting_title),
                 modifier = Modifier.padding(bottom = 8.dp)

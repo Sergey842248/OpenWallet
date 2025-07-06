@@ -48,6 +48,8 @@
     <string name="open_wallet">Öffne OpenWallet</string>
     <string name="barcode_position">Barcode Position in Vollbildanzeige</string>
     <string name="barcode_top_center">Oben / Mitte</string>
+    <string name="confirm_delete_dialog">Bestätigungsdialog beim Löschen</string>
+    <string name="confirm_delete_dialog_message">Möchten Sie diesen Pass wirklich löschen?</string>
     <string name="add_flight_pass">Flugticket</string>
     <string name="add_membership_card">Mitgliedskarte hinzufügen</string>
     <string name="cancel">Abbrechen</string>

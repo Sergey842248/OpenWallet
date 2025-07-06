@@ -28,6 +28,7 @@ data class SettingsUiState(
     val syncInterval: Duration = 1.toDuration(DurationUnit.HOURS),
     val barcodePosition: BarcodePosition = BarcodePosition.Center,
     val membershipCardImageDisplay: MembershipCardImageDisplay = MembershipCardImageDisplay.SMALL,
+    val confirmDeleteDialog: Boolean = true,
     val themeMode: ThemeMode = ThemeMode.LIGHT,
     val accentColor: AccentColor = AccentColor.PURPLE,
     val customAccentColor: String? = null,
@@ -45,7 +46,46 @@ class SettingsViewModel @Inject constructor(
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     init {
-        update()
+        viewModelScope.launch {
+            settingsStore.confirmDeleteDialogFlow().collect { confirmDelete ->
+                _uiState.value = _uiState.value.copy(confirmDeleteDialog = confirmDelete)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.isSyncEnabledFlow().collect { enableSync ->
+                _uiState.value = _uiState.value.copy(enableSync = enableSync)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.syncIntervalFlow().collect { syncInterval ->
+                _uiState.value = _uiState.value.copy(syncInterval = syncInterval)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.barcodePositionFlow().collect { barcodePosition ->
+                _uiState.value = _uiState.value.copy(barcodePosition = barcodePosition)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.membershipCardImageDisplayFlow().collect { membershipCardImageDisplay ->
+                _uiState.value = _uiState.value.copy(membershipCardImageDisplay = membershipCardImageDisplay)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.themeModeFlow().collect { themeMode ->
+                _uiState.value = _uiState.value.copy(themeMode = themeMode)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.accentColorFlow().collect { accentColor ->
+                _uiState.value = _uiState.value.copy(accentColor = accentColor)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.customAccentColorFlow().collect { customAccentColor ->
+                _uiState.value = _uiState.value.copy(customAccentColor = customAccentColor)
+            }
+        }
         // Collect all passes and filter for FlightPasses
         viewModelScope.launch {
             passStore.allPasses().map { passesWithLocalization ->
@@ -57,17 +97,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun update() {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                enableSync = settingsStore.isSyncEnabled(),
-                syncInterval = settingsStore.syncInterval(),
-                barcodePosition = settingsStore.barcodePosition(),
-                membershipCardImageDisplay = settingsStore.membershipCardImageDisplay(),
-                themeMode = settingsStore.themeMode(),
-                accentColor = settingsStore.accentColor(),
-                customAccentColor = settingsStore.customAccentColor()
-            )
-        }
+        // This function is no longer needed as all settings are collected via flows
+        // Keeping it for now in case it's called from other places that need a full refresh
+        // However, individual setters now directly update the SettingsStore, which then
+        // triggers the flow collection.
     }
 
     fun enableSync(enabled: Boolean) {
@@ -78,40 +111,37 @@ class SettingsViewModel @Inject constructor(
             } else {
                 updateScheduler.disableSync()
             }
-            update()
         }
     }
     fun setSyncInterval(duration: Duration) {
         settingsStore.setSyncInterval(duration)
         viewModelScope.launch {
             updateScheduler.updateSyncInterval()
-            update()
         }
     }
 
     fun setBarcodePosition(center: Boolean) {
         settingsStore.setBarcodePosition(if (center) BarcodePosition.Center else BarcodePosition.Top)
-        update()
     }
 
     fun setMembershipCardImageDisplay(display: MembershipCardImageDisplay) {
         settingsStore.setMembershipCardImageDisplay(display)
-        update()
+    }
+
+    fun setConfirmDeleteDialog(enabled: Boolean) {
+        settingsStore.setConfirmDeleteDialog(enabled)
     }
 
     fun setThemeMode(themeMode: ThemeMode) {
         settingsStore.setThemeMode(themeMode)
-        update()
     }
 
     fun setAccentColor(accentColor: AccentColor) {
         settingsStore.setAccentColor(accentColor)
-        update()
     }
 
     fun setCustomAccentColor(hexColor: String?) {
         settingsStore.setCustomAccentColor(hexColor)
-        update()
     }
 
     fun deletePass(pass: Pass) {

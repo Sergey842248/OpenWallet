@@ -53,6 +53,9 @@ import nz.eloque.foss_wallet.ui.view.settings.SettingsViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.WalletView
 import nz.eloque.foss_wallet.utils.isScrollingUp
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +88,8 @@ fun WalletScreen(
     }
     val selectedPasses = remember { mutableStateSetOf<Pass>() }
     var showAddOptions by remember { mutableStateOf(false) }
-    val settings = settingsViewModel.uiState.collectAsState()
+    val settings by settingsViewModel.uiState.collectAsState()
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
     WalletScaffold(
         navController = navController,
@@ -109,9 +113,13 @@ fun WalletScreen(
                     FloatingActionButton(
                         containerColor = MaterialTheme.colorScheme.error,
                         onClick = {
-                            coroutineScope.launch(Dispatchers.IO) {
-                                selectedPasses.forEach { passViewModel.delete(it) }
-                                selectedPasses.clear()
+                            if (settings.confirmDeleteDialog) {
+                                showDeleteConfirmationDialog = true
+                            } else {
+                                coroutineScope.launch(Dispatchers.IO) {
+                                    selectedPasses.forEach { passViewModel.delete(it) }
+                                    selectedPasses.clear()
+                                }
                             }
                         },
                     ) {
@@ -181,7 +189,7 @@ fun WalletScreen(
                 listState = listState,
                 scrollBehavior = scrollBehavior,
                 selectedPasses = selectedPasses,
-                membershipCardImageDisplay = settings.value.membershipCardImageDisplay
+                membershipCardImageDisplay = settings.membershipCardImageDisplay
             )
 
             AnimatedVisibility(
@@ -199,6 +207,32 @@ fun WalletScreen(
                         ) { showAddOptions = false }
                 )
             }
+        }
+
+        if (showDeleteConfirmationDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmationDialog = false },
+                title = { Text(stringResource(R.string.delete)) },
+                text = { Text(stringResource(R.string.confirm_delete_dialog_message)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                selectedPasses.forEach { passViewModel.delete(it) }
+                                selectedPasses.clear()
+                            }
+                            showDeleteConfirmationDialog = false
+                        }
+                    ) {
+                        Text(stringResource(R.string.delete))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteConfirmationDialog = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
         }
     }
 }

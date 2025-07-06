@@ -21,6 +21,7 @@ import nz.eloque.foss_wallet.persistence.BarcodePosition
 import nz.eloque.foss_wallet.persistence.PassLoadResult
 import nz.eloque.foss_wallet.persistence.PassStore
 import nz.eloque.foss_wallet.persistence.SettingsStore
+import nz.eloque.foss_wallet.ui.view.settings.SettingsUiState
 import java.io.InputStream
 import java.util.Locale
 
@@ -39,11 +40,18 @@ class PassViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(PassUiState())
     val uiState: StateFlow<PassUiState> = _uiState.asStateFlow()
+    private val _settingsUiState = MutableStateFlow(SettingsUiState())
+    val settingsUiState: StateFlow<SettingsUiState> = _settingsUiState.asStateFlow()
     private val workData: LiveData<List<WorkInfo>>
     private val observer = { workInfo: List<WorkInfo> -> updatePasses() }
 
     init {
         updatePasses()
+        viewModelScope.launch {
+            settingsStore.confirmDeleteDialogFlow().collect { confirmDelete ->
+                _settingsUiState.value = _settingsUiState.value.copy(confirmDeleteDialog = confirmDelete)
+            }
+        }
         workData = workManager.getWorkInfosByTagLiveData("update")
         workData.observeForever(observer)
     }
