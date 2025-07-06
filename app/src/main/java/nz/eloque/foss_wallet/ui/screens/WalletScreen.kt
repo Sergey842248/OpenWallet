@@ -144,7 +144,7 @@ fun WalletScreen(
                             horizontalAlignment = Alignment.End
                         ) {
                             ExtendedFloatingActionButton(
-                                text = { Text(stringResource(R.string.add_flight_pass)) },
+                                text = { Text(stringResource(R.string.pass)) },
                                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_flight_pass)) },
                                 onClick = {
                                     showAddOptions = false
@@ -153,7 +153,7 @@ fun WalletScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
                             )
                             ExtendedFloatingActionButton(
-                                text = { Text(stringResource(R.string.membership_card)) },
+                                text = { Text(stringResource(R.string.membership)) },
                                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_membership_card)) },
                                 onClick = {
                                     showAddOptions = false

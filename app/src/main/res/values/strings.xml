@@ -86,4 +86,5 @@
     <string name="settings_section_refresh">Refresh</string>
     <string name="settings_section_pass_management">Pass Management</string>
     <string name="delete_flight_pass">Delete Flight Pass</string>
+    <string name="membership">Membership</string>
 </resources>
