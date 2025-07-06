@@ -138,7 +138,6 @@ fun SettingsView(
             val currentCustomHex = settings.value.customAccentColor
 
             var showColorPickerDialog by remember { mutableStateOf(false) }
-            var hexInput by remember(currentCustomHex) { mutableStateOf(currentCustomHex ?: "") }
 
             val selectedColor = remember(currentAccentColor, currentCustomHex) {
                 if (currentAccentColor == AccentColor.CUSTOM && currentCustomHex != null) {
@@ -151,6 +150,7 @@ fun SettingsView(
                     currentAccentColor.colorInt?.let { Color(it) } ?: Color.Unspecified
                 }
             }
+            var hexInput by remember(selectedColor) { mutableStateOf(selectedColor.toArgb().toHexString()) }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -266,14 +266,14 @@ fun SettingsView(
                                                 .clickable {
                                                     coroutineScope.launch(Dispatchers.IO) {
                                                         settingsViewModel.setAccentColor(accentColor)
-                                                    settingsViewModel.setCustomAccentColor(null) // Clear custom if a preset is chosen
-                                                }
-                                                hexInput = color.toArgb().toHexString()
-                                                red = color.red
-                                                green = color.green
-                                                blue = color.blue
-                                                showColorPickerDialog = false
-                                                }
+                                                settingsViewModel.setCustomAccentColor(null) // Clear custom if a preset is chosen
+                                            }
+                                            hexInput = color.toArgb().toHexString()
+                                            red = color.red
+                                            green = color.green
+                                            blue = color.blue
+                                            showColorPickerDialog = false
+                                        }
                                         )
                                     }
                                 }
