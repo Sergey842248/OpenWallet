@@ -12,7 +12,7 @@ FossWallet is a free and Open-source (foss) Wallet application to manage Passes 
 * 
 
 ## Installation
-[<img src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png"
+[<img src="https://raw.githubusercontent.com/Sergey842248/OpenWallet/refs/heads/main/app/src/main/get-it-on-github.png"
 alt="Get it on GitHub"
 height="80">](https://github.com/SeineEloquenz/fosswallet/releases)
 
