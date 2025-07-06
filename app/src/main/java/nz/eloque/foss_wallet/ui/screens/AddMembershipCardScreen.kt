@@ -110,20 +110,17 @@ fun AddMembershipCardScreen(
                 onValueChange = { name = it },
                 label = { Text(stringResource(id = R.string.membership_card_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                isError = name.isBlank(),
-                supportingText = {
-                    if (name.isBlank()) {
-                        Text(stringResource(id = R.string.required_field))
-                    }
-                }
+                isError = name.isBlank()
             )
 
             TextField(
                 value = code,
                 onValueChange = { code = it },
                 label = { Text(stringResource(id = R.string.manual_code_entry)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = code.isBlank()
             )
+
 
             ExposedDropdownMenuBox(
                 expanded = expanded,
@@ -251,7 +248,7 @@ fun AddMembershipCardScreen(
                         navController.popBackStack()
                     }
                 },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank() && code.isNotEmpty()
             ) {
                 Text(text = stringResource(id = R.string.save))
             }
