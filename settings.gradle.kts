@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FossWallet"
+rootProject.name = "OpenWallet"
 include(":app")

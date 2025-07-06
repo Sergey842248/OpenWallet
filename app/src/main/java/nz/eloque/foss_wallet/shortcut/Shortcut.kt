@@ -14,7 +14,7 @@ import nz.eloque.foss_wallet.model.Pass
 
 object Shortcut {
 
-    const val SCHEME = "fosswallet"
+    const val SCHEME = "openwallet"
     const val HOST = "pass"
     const val BASE_URI = "$SCHEME://$HOST"
 
