@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "nz.eloque.foss_wallet"
+        applicationId = "com.sergey842248.openwallet"
         minSdk = 28
         targetSdk = 36
         versionCode = 60
@@ -63,9 +63,7 @@ android {
             )
             signingConfig = signingConfigs["release"]
         }
-        debug {
-            applicationIdSuffix = ".dev"
-        }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

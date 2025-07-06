@@ -81,7 +81,7 @@ fun AboutView() {
         contentAlignment = Alignment.BottomCenter
     ) {
         Text(
-            text = "v${BuildConfig.VERSION_NAME}-${BuildConfig.BUILD_TYPE}-${BuildConfig.VERSION_CODE}",
+            text = "v${BuildConfig.VERSION_NAME}-${BuildConfig.VERSION_CODE}",
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall
