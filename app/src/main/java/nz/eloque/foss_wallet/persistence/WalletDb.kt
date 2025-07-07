@@ -6,6 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import nz.eloque.foss_wallet.model.ChecklistItem
 import nz.eloque.foss_wallet.model.Pass
 import nz.eloque.foss_wallet.model.PassGroup
 import nz.eloque.foss_wallet.model.PassLocalization
@@ -15,8 +16,8 @@ import nz.eloque.foss_wallet.persistence.pass.PassDao
 
 
 @Database(
-    version = 13,
-    entities = [Pass::class, PassLocalization::class, PassGroup::class],
+    version = 14,
+    entities = [Pass::class, PassLocalization::class, PassGroup::class, ChecklistItem::class],
     autoMigrations = [
         AutoMigration (from = 4, to = 5),
         AutoMigration (from = 5, to = 6),
@@ -26,6 +27,7 @@ import nz.eloque.foss_wallet.persistence.pass.PassDao
         AutoMigration (from = 10, to = 11),
         AutoMigration (from = 11, to = 12),
         AutoMigration (from = 12, to = 13),
+        AutoMigration (from = 13, to = 14),
     ],
     exportSchema = true
 )
@@ -33,6 +35,7 @@ import nz.eloque.foss_wallet.persistence.pass.PassDao
 abstract class WalletDb : RoomDatabase() {
     abstract fun passDao(): PassDao
     abstract fun localizationDao(): PassLocalizationDao
+    abstract fun checklistDao(): ChecklistDao
 
     companion object {
         @Volatile

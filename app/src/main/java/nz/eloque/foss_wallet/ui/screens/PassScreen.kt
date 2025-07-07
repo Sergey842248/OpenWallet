@@ -154,7 +154,7 @@ fun PassScreen(
             },
         ) { scrollBehavior ->
             Column {
-                PassView(pass.value, passViewModel.barcodePosition(), scrollBehavior = scrollBehavior)
+                PassView(pass.value, passViewModel.barcodePosition(), showTravelChecklist = settings.showTravelChecklist, scrollBehavior = scrollBehavior)
             }
         }
 

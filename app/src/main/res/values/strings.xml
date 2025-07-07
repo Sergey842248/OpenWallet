@@ -40,6 +40,7 @@
     <string name="enable">Enable</string>
     <string name="search">Search</string>
     <string name="add_shortcut">Add shortcut</string>
+    <string name="show_travel_checklist">Show travel checklist</string>
     <string name="shortcut_exists">Shortcut already exists!</string>
     <string name="privacy">Privacy</string>
     <string name="details">Details</string>
@@ -89,4 +90,10 @@
     <string name="settings_section_pass_management">Pass Management</string>
     <string name="delete_flight_pass">Delete Flight Pass</string>
     <string name="membership">Membership</string>
+    <string name="custom_checklist_items">Custom Checklist Items</string>
+    <string name="add_new_item">Add new item</string>
+    <string name="edit_custom_checklist_items">Edit Custom Checklist Items</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="drag_to_reorder">Drag to reorder</string>
 </resources>

@@ -20,6 +20,8 @@ private const val CONFIRM_DELETE_DIALOG = "confirmDeleteDialog"
 private const val THEME_MODE = "themeMode"
 private const val ACCENT_COLOR_KEY = "accentColor"
 private const val CUSTOM_ACCENT_COLOR_KEY = "customAccentColor"
+private const val SHOW_TRAVEL_CHECKLIST = "showTravelChecklist"
+private const val CUSTOM_CHECKLIST_ITEMS = "customChecklistItems"
 
 sealed class BarcodePosition(val arrangement: Arrangement.Vertical, val key: String) {
     object Top : BarcodePosition(Arrangement.Top, "TOP")
@@ -79,6 +81,8 @@ class SettingsStore @Inject constructor(
     private val _themeModeFlow = MutableStateFlow(themeMode())
     private val _accentColorFlow = MutableStateFlow(accentColor())
     private val _customAccentColorFlow = MutableStateFlow(customAccentColor())
+    private val _showTravelChecklistFlow = MutableStateFlow(showTravelChecklist())
+    private val _customChecklistItemsFlow = MutableStateFlow(customChecklistItems())
 
     private val listener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
@@ -90,6 +94,8 @@ class SettingsStore @Inject constructor(
             THEME_MODE -> _themeModeFlow.value = ThemeMode.of(sharedPreferences.getString(THEME_MODE, ThemeMode.LIGHT.key)!!)
             ACCENT_COLOR_KEY -> _accentColorFlow.value = AccentColor.of(sharedPreferences.getString(ACCENT_COLOR_KEY, AccentColor.PURPLE.key)!!)
             CUSTOM_ACCENT_COLOR_KEY -> _customAccentColorFlow.value = sharedPreferences.getString(CUSTOM_ACCENT_COLOR_KEY, null)
+            SHOW_TRAVEL_CHECKLIST -> _showTravelChecklistFlow.value = sharedPreferences.getBoolean(SHOW_TRAVEL_CHECKLIST, true)
+            CUSTOM_CHECKLIST_ITEMS -> _customChecklistItemsFlow.value = sharedPreferences.getString(CUSTOM_CHECKLIST_ITEMS, "")!!
         }
     }
 
@@ -126,6 +132,14 @@ class SettingsStore @Inject constructor(
     fun confirmDeleteDialogFlow(): StateFlow<Boolean> = _confirmDeleteDialogFlow.asStateFlow()
 
     fun setConfirmDeleteDialog(enabled: Boolean) = prefs.edit { putBoolean(CONFIRM_DELETE_DIALOG, enabled) }
+
+    fun showTravelChecklist(): Boolean = prefs.getBoolean(SHOW_TRAVEL_CHECKLIST, true)
+    fun showTravelChecklistFlow(): StateFlow<Boolean> = _showTravelChecklistFlow.asStateFlow()
+    fun setShowTravelChecklist(enabled: Boolean) = prefs.edit { putBoolean(SHOW_TRAVEL_CHECKLIST, enabled) }
+
+    fun customChecklistItems(): String = prefs.getString(CUSTOM_CHECKLIST_ITEMS, "")!!
+    fun customChecklistItemsFlow(): StateFlow<String> = _customChecklistItemsFlow.asStateFlow()
+    fun setCustomChecklistItems(items: String) = prefs.edit { putString(CUSTOM_CHECKLIST_ITEMS, items) }
 
     fun themeMode(): ThemeMode = ThemeMode.of(prefs.getString(THEME_MODE, ThemeMode.LIGHT.key)!!)
     fun themeModeFlow(): StateFlow<ThemeMode> = _themeModeFlow.asStateFlow()

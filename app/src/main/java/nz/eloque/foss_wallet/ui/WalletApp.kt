@@ -34,7 +34,7 @@ import nz.eloque.foss_wallet.ui.screens.EditMembershipCardScreen
 import nz.eloque.foss_wallet.ui.screens.SettingsScreen
 import nz.eloque.foss_wallet.ui.screens.UpdateFailureScreen
 import nz.eloque.foss_wallet.ui.screens.WalletScreen
-import nz.eloque.foss_wallet.ui.screens.EditMembershipCardScreen
+import nz.eloque.foss_wallet.ui.screens.CustomChecklistScreen
 import nz.eloque.foss_wallet.ui.view.settings.SettingsViewModel
 import nz.eloque.foss_wallet.ui.view.wallet.PassViewModel
 import nz.eloque.foss_wallet.persistence.ThemeMode
@@ -52,6 +52,7 @@ sealed class Screen(val route: String, val icon: ImageVector, @StringRes val res
     data object Settings : Screen("settings", Icons.Default.Settings, R.string.settings)
     data object AddMembershipCard : Screen("add_membership_card", Icons.Default.Add, R.string.add_membership_card)
     data object EditMembershipCard : Screen("edit_membership_card", Icons.Default.Edit, R.string.edit)
+    data object CustomChecklist : Screen("custom_checklist", Icons.Default.Edit, R.string.custom_checklist_items)
 }
 
 @Composable
@@ -137,6 +138,9 @@ fun WalletApp(
                 }
                 composable(Screen.Settings.route) {
                     SettingsScreen(navController, settingsViewModel)
+                }
+                composable(Screen.CustomChecklist.route) {
+                    CustomChecklistScreen(navController, settingsViewModel)
                 }
                 composable(Screen.AddMembershipCard.route) {
                     AddMembershipCardScreen(navController)

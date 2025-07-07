@@ -36,6 +36,7 @@
     <string name="enable">Aktivieren</string>
     <string name="enable_sync">Pass-Aktualisierungen</string>
     <string name="add_shortcut">Shortcut hinzufügen</string>
+    <string name="show_travel_checklist">Reise-Checkliste anzeigen</string>
     <string name="shortcut_exists">Es existiert bereits ein Shortcut!</string>
     <string name="privacy">Privatsphäre</string>
     <string name="details">Details</string>
@@ -54,4 +55,10 @@
     <string name="add_membership_card">Mitgliedskarte hinzufügen</string>
     <string name="cancel">Abbrechen</string>
     <string name="accent_color_custom">Benutzerdefiniert</string>
+    <string name="custom_checklist_items">Eigene Checklist-Einträge</string>
+    <string name="add_new_item">Neuen Eintrag hinzufügen</string>
+    <string name="edit_custom_checklist_items">Eigene Checklist-Einträge bearbeiten</string>
+    <string name="move_up">Nach oben verschieben</string>
+    <string name="move_down">Nach unten verschieben</string>
+    <string name="drag_to_reorder">Ziehen zum Neuanordnen</string>
 </resources>

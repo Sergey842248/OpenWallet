@@ -52,6 +52,11 @@ class PassViewModel @Inject constructor(
                 _settingsUiState.value = _settingsUiState.value.copy(confirmDeleteDialog = confirmDelete)
             }
         }
+        viewModelScope.launch {
+            settingsStore.showTravelChecklistFlow().collect { showTravelChecklist ->
+                _settingsUiState.value = _settingsUiState.value.copy(showTravelChecklist = showTravelChecklist)
+            }
+        }
         workData = workManager.getWorkInfosByTagLiveData("update")
         workData.observeForever(observer)
     }

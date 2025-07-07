@@ -9,7 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import nz.eloque.foss_wallet.persistence.ChecklistDao
 import nz.eloque.foss_wallet.persistence.WalletDb
+import nz.eloque.foss_wallet.persistence.checklist.ChecklistRepository
 import nz.eloque.foss_wallet.persistence.localization.PassLocalizationDao
 import nz.eloque.foss_wallet.persistence.localization.PassLocalizationRepository
 import nz.eloque.foss_wallet.persistence.pass.PassDao
@@ -31,6 +33,11 @@ object AppModule {
     }
 
     @Provides
+    fun provideChecklistRepository(checklistDao: ChecklistDao): ChecklistRepository {
+        return ChecklistRepository(checklistDao)
+    }
+
+    @Provides
     fun provideWalletDb(@ApplicationContext context: Context): WalletDb {
         return WalletDb.getDb(context)
     }
@@ -43,6 +50,11 @@ object AppModule {
     @Provides
     fun provideLocalizationDAo(walletDb: WalletDb): PassLocalizationDao {
         return walletDb.localizationDao()
+    }
+
+    @Provides
+    fun provideChecklistDao(walletDb: WalletDb): ChecklistDao {
+        return walletDb.checklistDao()
     }
 
     @Provides

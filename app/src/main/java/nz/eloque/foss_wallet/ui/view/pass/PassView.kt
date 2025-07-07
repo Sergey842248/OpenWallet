@@ -34,12 +34,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import nz.eloque.foss_wallet.ui.view.image.ZoomableImage
+import nz.eloque.foss_wallet.ui.view.pass.TravelChecklistCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PassView(
     pass: Pass,
     barcodePosition: BarcodePosition,
+    showTravelChecklist: Boolean,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
 ) {
@@ -99,6 +101,19 @@ fun PassView(
                 .padding(10.dp)
         ) {
             BackFields(pass.backFields)
+            val airlineKeywords = listOf("Condor", "Lufthansa", "Eurowings", "Ryanair", "EasyJet", "British Airways", "Air France", "KLM", "American Airlines", "Delta", "United Airlines", "Turkish Airlines", "Qatar Airways")
+            val containsAirline = airlineKeywords.any { keyword ->
+                pass.organization.contains(keyword, ignoreCase = true) ||
+                pass.description.contains(keyword, ignoreCase = true) ||
+                pass.backFields.any { it.content.toString().contains(keyword, ignoreCase = true) } ||
+                pass.primaryFields.any { it.content.toString().contains(keyword, ignoreCase = true) } ||
+                pass.auxiliaryFields.any { it.content.toString().contains(keyword, ignoreCase = true) } ||
+                pass.secondaryFields.any { it.content.toString().contains(keyword, ignoreCase = true) }
+            }
+
+            if (showTravelChecklist && containsAirline && pass.type !is PassType.MembershipCard) {
+                TravelChecklistCard(passId = pass.id)
+            }
         }
     }
 }
@@ -138,5 +153,5 @@ private fun PassPreview() {
             PassField("data2", "data2", PassContent.Plain("Shorter Value")),
         ),
     )
-    PassView(pass, BarcodePosition.Center)
+    PassView(pass, BarcodePosition.Center, true)
 }

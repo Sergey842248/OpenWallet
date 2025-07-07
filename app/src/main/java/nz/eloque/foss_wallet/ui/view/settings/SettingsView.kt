@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,7 +46,6 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Button
 import nz.eloque.foss_wallet.model.Pass // Import Pass
 import nz.eloque.foss_wallet.model.PassType // Import PassType
 import androidx.compose.ui.graphics.Color
@@ -55,6 +57,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.toArgb
 import android.graphics.Color as AndroidColor // Alias to avoid conflict with Compose Color
@@ -62,11 +65,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Slider
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.Color as ComposeColor // Alias to avoid conflict with Android Color
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.navigation.NavController
+import nz.eloque.foss_wallet.ui.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsView(
     settingsViewModel: SettingsViewModel,
+    navController: NavController,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val settings = settingsViewModel.uiState.collectAsState()
@@ -328,6 +335,21 @@ fun SettingsView(
                 switchState = settings.value.confirmDeleteDialog,
                 onCheckedChange = { coroutineScope.launch(Dispatchers.IO) { settingsViewModel.setConfirmDeleteDialog(it) } }
             )
+            HorizontalDivider()
+            SettingsSwitch(
+                name = R.string.show_travel_checklist,
+                switchState = settings.value.showTravelChecklist,
+                onCheckedChange = { coroutineScope.launch(Dispatchers.IO) { settingsViewModel.setShowTravelChecklist(it) } }
+            )
+            if (settings.value.showTravelChecklist) {
+                HorizontalDivider()
+                Button(
+                    onClick = { navController.navigate(Screen.CustomChecklist.route) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.custom_checklist_items))
+                }
+            }
             HorizontalDivider()
             Text(
                 text = stringResource(R.string.membership_card_image_display_setting_title),

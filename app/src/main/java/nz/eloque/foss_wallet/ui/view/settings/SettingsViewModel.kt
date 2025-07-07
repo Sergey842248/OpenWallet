@@ -29,10 +29,12 @@ data class SettingsUiState(
     val barcodePosition: BarcodePosition = BarcodePosition.Center,
     val membershipCardImageDisplay: MembershipCardImageDisplay = MembershipCardImageDisplay.SMALL,
     val confirmDeleteDialog: Boolean = true,
+    val showTravelChecklist: Boolean = true,
     val themeMode: ThemeMode = ThemeMode.LIGHT,
     val accentColor: AccentColor = AccentColor.PURPLE,
     val customAccentColor: String? = null,
-    val flightPasses: List<Pass> = emptyList()
+    val flightPasses: List<Pass> = emptyList(),
+    val customChecklistItems: String = ""
 )
 
 @HiltViewModel
@@ -84,6 +86,16 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             settingsStore.customAccentColorFlow().collect { customAccentColor ->
                 _uiState.value = _uiState.value.copy(customAccentColor = customAccentColor)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.showTravelChecklistFlow().collect { showTravelChecklist ->
+                _uiState.value = _uiState.value.copy(showTravelChecklist = showTravelChecklist)
+            }
+        }
+        viewModelScope.launch {
+            settingsStore.customChecklistItemsFlow().collect { customChecklistItems ->
+                _uiState.value = _uiState.value.copy(customChecklistItems = customChecklistItems)
             }
         }
         // Collect all passes and filter for FlightPasses
@@ -142,6 +154,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setCustomAccentColor(hexColor: String?) {
         settingsStore.setCustomAccentColor(hexColor)
+    }
+
+    fun setShowTravelChecklist(enabled: Boolean) {
+        settingsStore.setShowTravelChecklist(enabled)
+    }
+
+    fun setCustomChecklistItems(items: String) {
+        settingsStore.setCustomChecklistItems(items)
     }
 
     fun deletePass(pass: Pass) {
