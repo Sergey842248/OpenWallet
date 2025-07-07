@@ -45,8 +45,8 @@ android {
         applicationId = "com.sergey842248.openwallet"
         minSdk = 28
         targetSdk = 36
-        versionCode = 60
-        versionName = "0.21.1"
+        versionCode = 400
+        versionName = "4.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
