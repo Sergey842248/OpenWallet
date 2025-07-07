@@ -31,4 +31,10 @@ class ChecklistViewModel(private val repository: ChecklistRepository, private va
             repository.insertAll(items)
         }
     }
+
+    fun addChecklistItems(items: List<ChecklistItem>) {
+        viewModelScope.launch {
+            repository.insertAll(items)
+        }
+    }
 }
