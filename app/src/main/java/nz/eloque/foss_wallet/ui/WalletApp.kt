@@ -52,7 +52,7 @@ sealed class Screen(val route: String, val icon: ImageVector, @StringRes val res
     data object Settings : Screen("settings", Icons.Default.Settings, R.string.settings)
     data object AddMembershipCard : Screen("add_membership_card", Icons.Default.Add, R.string.add_membership_card)
     data object EditMembershipCard : Screen("edit_membership_card", Icons.Default.Edit, R.string.edit)
-    data object CustomChecklist : Screen("custom_checklist", Icons.Default.Edit, R.string.custom_checklist_items)
+    data object CustomChecklist : Screen("custom_checklist", Icons.Default.Edit, R.string.custom_travellist_items)
 }
 
 @Composable

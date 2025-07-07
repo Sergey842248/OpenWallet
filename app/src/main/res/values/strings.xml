@@ -90,9 +90,8 @@
     <string name="settings_section_pass_management">Pass Management</string>
     <string name="delete_flight_pass">Delete Flight Pass</string>
     <string name="membership">Membership</string>
-    <string name="custom_checklist_items">Custom Checklist Items</string>
+    <string name="custom_travellist_items">Edit Travel-List Items</string>
     <string name="add_new_item">Add new item</string>
-    <string name="edit_custom_checklist_items">Edit Custom Checklist Items</string>
     <string name="move_up">Move up</string>
     <string name="move_down">Move down</string>
     <string name="drag_to_reorder">Drag to reorder</string>

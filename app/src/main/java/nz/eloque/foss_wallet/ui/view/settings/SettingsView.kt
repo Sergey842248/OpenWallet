@@ -347,7 +347,7 @@ fun SettingsView(
                     onClick = { navController.navigate(Screen.CustomChecklist.route) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(stringResource(R.string.custom_checklist_items))
+                    Text(stringResource(R.string.custom_travellist_items))
                 }
             }
             HorizontalDivider()

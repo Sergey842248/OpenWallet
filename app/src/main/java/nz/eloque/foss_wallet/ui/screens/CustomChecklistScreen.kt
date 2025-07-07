@@ -33,7 +33,7 @@ fun CustomChecklistScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.custom_checklist_items)) },
+                title = { Text(stringResource(R.string.custom_travellist_items)) },
                 navigationIcon = {
                     BackButton(navController)
                 }
