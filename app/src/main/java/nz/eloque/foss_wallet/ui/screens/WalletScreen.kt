@@ -9,6 +9,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -92,6 +94,11 @@ fun WalletScreen(
     var showAddOptions by remember { mutableStateOf(false) }
     val settings by settingsViewModel.uiState.collectAsState()
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
+    var isWalletVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        isWalletVisible = true
+    }
 
     Box(modifier = Modifier.fillMaxSize()) { // New root Box
         WalletScaffold(
@@ -109,14 +116,20 @@ fun WalletScreen(
             },
             floatingActionButton = { /* Removed FAB from here */ }
         ) { scrollBehavior ->
-            WalletView( // WalletView is now directly the content
-                navController,
-                passViewModel,
-                listState = listState,
-                scrollBehavior = scrollBehavior,
-                selectedPasses = selectedPasses,
-                membershipCardImageDisplay = settings.membershipCardImageDisplay
-            )
+            AnimatedVisibility(
+                visible = isWalletVisible,
+                enter = fadeIn(animationSpec = tween(durationMillis = 500)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 500))
+            ) {
+                WalletView( // WalletView is now directly the content
+                    navController,
+                    passViewModel,
+                    listState = listState,
+                    scrollBehavior = scrollBehavior,
+                    selectedPasses = selectedPasses,
+                    membershipCardImageDisplay = settings.membershipCardImageDisplay
+                )
+            }
         }
 
         if (showAddOptions) { // Conditionally render dimming Box

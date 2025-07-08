@@ -92,7 +92,10 @@ fun WalletView(
         val sortedPasses = list.value.passes.sortedWith(comparator).groupBy { it.groupId }.toList()
         val groups = sortedPasses.filter { it.first != null }
         val ungrouped = sortedPasses.filter { it.first == null }.flatMap { it.second }
-        items(groups) { (groupId, passes) ->
+        items(
+            items = groups,
+            key = { it.first!! }
+        ) { (groupId, passes) ->
             GroupCard(
                 groupId!!,
                 passes,
@@ -104,7 +107,10 @@ fun WalletView(
                 membershipCardImageDisplay = membershipCardImageDisplay
             )
         }
-        items(ungrouped) { pass ->
+        items(
+            items = ungrouped,
+            key = { it.id }
+        ) { pass ->
             SwipeToDismiss(
                 leftSwipeIcon = Icons.Default.SelectAll,
                 allowRightSwipe = false,

@@ -3,8 +3,11 @@
 package nz.eloque.foss_wallet.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -125,10 +128,18 @@ fun WalletApp(
             NavHost(
                 navController = navController,
                 startDestination = Screen.Wallet.route,
-                enterTransition = { slideIntoContainer(SlideDirection.Start, tween()) },
-                exitTransition = { slideOutOfContainer(SlideDirection.Start, tween()) },
-                popEnterTransition = { slideIntoContainer(SlideDirection.End, tween()) },
-                popExitTransition = { slideOutOfContainer(SlideDirection.End, tween()) }
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300))
+                },
+                exitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300))
+                }
             ) {
                 composable(Screen.Wallet.route) {
                     WalletScreen(navController, passViewModel, settingsViewModel)
